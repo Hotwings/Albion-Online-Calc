@@ -23,8 +23,31 @@ const ORE_NAME = "ORE"
 const METALBAR_NAME = "METALBAR"
 
 
-main();
 async function main() {
+	var sortedResources = {};
+	var resources = await getResources();
+	console.log(resources);
+	resources.forEach(resource => {
+		var [tier, name] = resource.item_id.split("_");
+		var quality = resource.quality;
+		if (!Object.hasOwn(sortedResources, name)) {
+			sortedResources[name] = {};
+		}
+		if (!Object.hasOwn(sortedResources[name], tier)) {
+
+			sortedResources[name][tier] = {};
+		}
+		if (!Object.hasOwn(sortedResources[name][tier], quality)) {
+
+			sortedResources[name][tier][quality] = resource;
+		}
+
+	});
+	console.log(sortedResources);
+
+}
+
+async function getResources() {
 	var resourcesList = "";
 	for (var i = minimumTier; i <= maxTier; i++) {
 		resourcesList += "T" + i + "_" + HIDE_NAME + ",";
@@ -41,12 +64,13 @@ async function main() {
 	resourcesList = resourcesList.slice(0, -1);
 	var qualitiesList = "";
 	for (var i = minimumQuality; i <= maxQuality; i++) {
-		qualitiesList+=i+",";
+		qualitiesList += i + ",";
 	}
 	qualitiesList = qualitiesList.slice(0, -1);
-	const response = await fetch(apiUrl + "/api/v2/stats/Prices/" + resourcesList + ".json?locations=Bridgewatch,Fort Sterling,Lymhurst,Martlock,Thetford&qualities="+qualitiesList)
-	const responseJson = await response.json();
-	console.log(responseJson);
-
-	
+	const response = await fetch(apiUrl + "/api/v2/stats/Prices/" + resourcesList + ".json?locations=Bridgewatch,Fort Sterling,Lymhurst,Martlock,Thetford&qualities=" + qualitiesList)
+	return await response.json();
 }
+
+
+
+main();
