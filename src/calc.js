@@ -25,19 +25,18 @@ async function main() {
 	var resources = await getResources();
 	console.log(resources);
 	resources.forEach(resource => {
-		var [tier, name, level="Base"] = resource.item_id.split("_");
-		if (!Object.hasOwn(sortedResources, name)) {
-			sortedResources[name] = {};
-		}
-		if (!Object.hasOwn(sortedResources[name], tier)) {
+		var [tier, name, enchantment=""] = resource.item_id.split("_");
+		var fullName = (name+" "+enchantment).trim();
 
-			sortedResources[name][tier] = {};
+		if (!Object.hasOwn(sortedResources, tier)) {
+			sortedResources[tier] = {};
 		}
-		if (!Object.hasOwn(sortedResources[name][tier], level)) {
+		if (!Object.hasOwn(sortedResources[tier], fullName)) {
 
-			sortedResources[name][tier][level] = [];
+			sortedResources[tier][fullName] = [];
 		}
-		sortedResources[name][tier][level].push(resource);
+		
+		sortedResources[tier][fullName].push(resource);
 
 	});
 	console.log(sortedResources);
